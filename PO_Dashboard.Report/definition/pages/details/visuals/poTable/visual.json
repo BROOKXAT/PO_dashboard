@@ -1,0 +1,315 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.3.0/schema.json",
+  "name": "poTable",
+  "position": {
+    "x": 214,
+    "y": 115,
+    "z": 15000,
+    "width": 1047,
+    "height": 587,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "PO Number"
+                }
+              },
+              "queryRef": "PO Data.PO Number",
+              "nativeQueryRef": "PO Number"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Supplier"
+                }
+              },
+              "queryRef": "PO Data.Supplier",
+              "nativeQueryRef": "Supplier"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Material"
+                }
+              },
+              "queryRef": "PO Data.Material",
+              "nativeQueryRef": "Material"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Status"
+                }
+              },
+              "queryRef": "PO Data.Status",
+              "nativeQueryRef": "Status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Issue Date"
+                }
+              },
+              "queryRef": "PO Data.Issue Date",
+              "nativeQueryRef": "Issue Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Expedition Date"
+                }
+              },
+              "queryRef": "PO Data.Expedition Date",
+              "nativeQueryRef": "Expedition Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Planned Arrival Date"
+                }
+              },
+              "queryRef": "PO Data.Planned Arrival Date",
+              "nativeQueryRef": "Planned Arrival Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Actual Arrival Date"
+                }
+              },
+              "queryRef": "PO Data.Actual Arrival Date",
+              "nativeQueryRef": "Actual Arrival Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Reception Date"
+                }
+              },
+              "queryRef": "PO Data.Reception Date",
+              "nativeQueryRef": "Reception Date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Cycle Time (Days)"
+                }
+              },
+              "queryRef": "PO Data.Cycle Time (Days)",
+              "nativeQueryRef": "Cycle Time (Days)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Ordered Qty"
+                }
+              },
+              "queryRef": "PO Data.Ordered Qty",
+              "nativeQueryRef": "Ordered Qty"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "PO Value"
+                }
+              },
+              "queryRef": "PO Data.PO Value",
+              "nativeQueryRef": "PO Value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "Currency"
+                }
+              },
+              "queryRef": "PO Data.Currency",
+              "nativeQueryRef": "Currency"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'All Purchase Orders'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#10123F'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#DCE1F0'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

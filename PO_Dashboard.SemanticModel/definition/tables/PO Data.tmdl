@@ -1,0 +1,321 @@
+table 'PO Data'
+	lineageTag: fdcf3f9b-b4ba-4a5f-9935-7ba4d3a30449
+
+	measure 'Total PO Numbers' = DISTINCTCOUNT ( 'PO Data'[PO Number] )
+		formatString: #,0
+		displayFolder: KPIs
+		lineageTag: a6e7a704-8492-46ab-90fa-f63cf4f3996b
+
+	measure 'Procurement Cycle Time (Days)' =
+			AVERAGEX (
+			    FILTER (
+			        'PO Data',
+			        NOT ISBLANK ( 'PO Data'[Issue Date] )
+			            && NOT ISBLANK ( 'PO Data'[Reception Date] )
+			    ),
+			    DATEDIFF ( 'PO Data'[Issue Date], 'PO Data'[Reception Date], DAY )
+			)
+		formatString: #,0.0
+		displayFolder: KPIs
+		lineageTag: 36976643-2e8d-462f-b72b-33fb03edbd22
+
+	measure 'Total PO Value' = SUM ( 'PO Data'[PO Value] )
+		formatString: #,0.00
+		displayFolder: KPIs
+		lineageTag: f4172210-c451-4998-b604-4196eb7b7f2a
+
+	measure 'Total Ordered Qty' = SUM ( 'PO Data'[Ordered Qty] )
+		formatString: #,0
+		displayFolder: KPIs
+		lineageTag: 8a170765-1ec7-41a2-81a6-1a6a853fa318
+
+	measure 'Top Supplier' =
+			VAR Ranked =
+			    TOPN (
+			        1,
+			        ADDCOLUMNS ( VALUES ( 'PO Data'[Supplier] ), "@Value", [Total PO Value] ),
+			        [@Value], DESC
+			    )
+			RETURN
+			    CONCATENATEX ( Ranked, 'PO Data'[Supplier], ", " )
+		displayFolder: Rankings
+		lineageTag: 588ba694-734c-405c-86b5-4034fbf31eed
+
+	measure 'Top 5 Materials Qty' =
+			VAR Qty = [Total Ordered Qty]
+			VAR RankNo =
+			    RANKX ( ALLSELECTED ( 'PO Data'[Material] ), [Total Ordered Qty], , DESC, DENSE )
+			RETURN
+			    IF ( NOT ISBLANK ( Qty ) && RankNo <= 5, Qty )
+		formatString: #,0
+		displayFolder: Rankings
+		lineageTag: 7077c7cd-28b4-4fa8-91d6-27c43a60e10b
+
+	measure 'Arrival Days Late' =
+			VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
+			VAR Actual  = COALESCE ( SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] ), TODAY () )  -- not arrived yet: use today
+			RETURN
+			    IF (
+			        ISEMPTY ( 'PO Data' ) || ISBLANK ( Planned ),   -- filtered out, or no planned date
+			        BLANK (),
+			        DATEDIFF ( Planned, Actual, DAY )
+			    )
+		formatString: 0
+		displayFolder: Delivery
+		lineageTag: d2aa73b0-b193-4192-82c1-f8e2c9a18624
+
+	measure 'On-Time Delivery %' =
+			VAR PerPO =
+			    ADDCOLUMNS (
+			        VALUES ( 'PO Data'[PO Number] ),
+			        "@Late", [Arrival Days Late],
+			        "@Arrived", NOT ISBLANK ( CALCULATE ( MAX ( 'PO Data'[Actual Arrival Date] ) ) )
+			    )
+			-- POs that are due: already arrived, or not arrived and past the planned date
+			VAR Evaluated = FILTER ( PerPO, NOT ISBLANK ( [@Late] ) && ( [@Arrived] || [@Late] > 0 ) )
+			VAR OnTime    = FILTER ( Evaluated, [@Arrived] && [@Late] <= 0 )
+			RETURN
+			    DIVIDE ( COUNTROWS ( OnTime ) + 0, COUNTROWS ( Evaluated ) )   -- +0 so a supplier with no on-time POs shows 0%, not blank
+		formatString: 0.0%
+		displayFolder: Delivery
+		lineageTag: fba653a0-e459-44eb-81c4-380f3b61f122
+
+	measure 'Arrival Indicator' =
+			VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
+			VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] )
+			VAR Late    = [Arrival Days Late]
+			RETURN
+			    IF ( ISEMPTY ( 'PO Data' ), BLANK (),   -- PO filtered out by a slicer: hide the row
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Planned ), UNICHAR ( 9898 ),                       -- white: no planned date
+			        ISBLANK ( Actual ) && Planned >= TODAY (), UNICHAR ( 128309 ), -- blue: not due yet
+			        Late <= 0, UNICHAR ( 128994 ),                               -- green: on time
+			        Late <= 7, UNICHAR ( 128992 ),                               -- orange: 1-7 days late
+			        UNICHAR ( 128308 )                                           -- red: more than 7 days late
+			    ))
+		displayFolder: Delivery
+		lineageTag: d71e4aeb-4b5b-4766-8b1a-71061e5bea97
+
+	measure 'Arrival Status' =
+			VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
+			VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] )
+			VAR Late    = [Arrival Days Late]
+			RETURN
+			    IF ( ISEMPTY ( 'PO Data' ), BLANK (),   -- PO filtered out by a slicer: hide the row
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Planned ), "No planned date",
+			        ISBLANK ( Actual ) && Planned >= TODAY (),
+			            "Upcoming - due in " & DATEDIFF ( TODAY (), Planned, DAY ) & " day(s): confirm ETA with supplier",
+			        ISBLANK ( Actual ),
+			            "Not arrived - " & Late & " day(s) overdue: expedite with supplier",
+			        Late < 0, "Arrived early (" & -Late & " day(s))",
+			        Late = 0, "On time",
+			        "Arrived " & Late & " day(s) late"
+			    ))
+		displayFolder: Delivery
+		lineageTag: 1fd48578-5472-4b2b-afcb-ca3bef91669d
+
+	column 'PO Number'
+		dataType: string
+		lineageTag: d35e48f5-dc5b-4e37-a689-e6df11c1ce0b
+		summarizeBy: none
+		sourceColumn: PO Number
+
+	column Supplier
+		dataType: string
+		lineageTag: 83ca91ff-a6f8-4c83-a727-574a32e8fbff
+		summarizeBy: none
+		sourceColumn: Supplier
+
+	column Material
+		dataType: string
+		lineageTag: 98b85686-9367-4fb0-99f5-f3dfee5ade2f
+		summarizeBy: none
+		sourceColumn: Material
+
+	column 'PO Value'
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 824ed7f3-be0c-4cd4-b461-a39e7872fb99
+		summarizeBy: none
+		sourceColumn: PO Value
+
+	column Currency
+		dataType: string
+		lineageTag: 00116eb8-3e40-4901-9b57-c8c1a7658cea
+		summarizeBy: none
+		sourceColumn: Currency
+
+	column 'Ordered Qty'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 6bb02b9c-b03c-402f-a1f2-499a43261e59
+		summarizeBy: none
+		sourceColumn: Ordered Qty
+
+	column 'Issue Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: b32bc6e2-17ae-4416-848c-c7cfd608161c
+		summarizeBy: none
+		sourceColumn: Issue Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Expedition Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: e9ef9553-baa1-4ab7-a395-6aa9871dab31
+		summarizeBy: none
+		sourceColumn: Expedition Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Planned Arrival Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 5825efa3-1bf6-41bc-b575-09586b0a1cc0
+		summarizeBy: none
+		sourceColumn: Planned Arrival Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Actual Arrival Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: f1a20bd4-b8e9-4d1d-90dd-5e72a04b5fe4
+		summarizeBy: none
+		sourceColumn: Actual Arrival Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Reception Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 1119bfa4-07c4-4024-9624-58f67bd879e3
+		summarizeBy: none
+		sourceColumn: Reception Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Status
+		dataType: string
+		lineageTag: 3236332d-ad5c-48da-8d99-e896ee3c835e
+		summarizeBy: none
+		sourceColumn: Status
+
+	column 'Cycle Time (Days)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 89290d30-1a11-4266-a327-463eac632814
+		summarizeBy: none
+		sourceColumn: Cycle Time (Days)
+
+	partition 'PO Data' = m
+		mode: import
+		source =
+				// ============================================================================
+				// Power Query (M) – table "PO Data"
+				// Source: DB_DATA2.xlsx / Sheet1
+				// Requires a text parameter named FilePath = full path to DB_DATA2.xlsx
+				// ============================================================================
+				let
+				    // ---- 1. Load -----------------------------------------------------------
+				    Source      = Excel.Workbook(File.Contents(FilePath), null, true),
+				    Sheet       = Source{[Item = "Sheet1", Kind = "Sheet"]}[Data],
+				    Promoted    = Table.PromoteHeaders(Sheet, [PromoteAllScalars = true]),
+				
+				    // ---- 2. Keep only real columns (drops the empty 13th column) -----------
+				    KeptColumns = Table.SelectColumns(
+				        Promoted,
+				        {"PO Number", "Supplier", "Material", "PO Value (€)", "Currency", "Ordered Qty",
+				         "Issue Date", "Expedition Date", "Planned Arrival Date", "Actual Arrival Date",
+				         "Reception Date", "Status"},
+				        MissingField.UseNull),
+				
+				    // ---- 3. Drop empty rows ------------------------------------------------
+				    NonEmptyRows = Table.SelectRows(
+				        KeptColumns,
+				        each [PO Number] <> null and Text.Trim(Text.From([PO Number])) <> ""),
+				
+				    // ---- 4. Helper functions -----------------------------------------------
+				    // Excel cells that were stored as real dates were typed dd/mm but read as
+				    // mm/dd (e.g. 08/01/2026 stored as 1-Aug-2026). They get day/month swapped.
+				    // Text cells such as "20/01/2026" are parsed as dd/MM/yyyy.
+				    SwapDayMonthOnExcelDates = true,
+				
+				    ToDate = (v as any) as nullable date =>
+				        let
+				            Swap = (d as date) as date =>
+				                if SwapDayMonthOnExcelDates and Date.Day(d) <= 12
+				                then #date(Date.Year(d), Date.Day(d), Date.Month(d))
+				                else d,
+				            Result =
+				                if v = null then null
+				                else if v is date then Swap(v)
+				                else if v is datetime then Swap(Date.From(v))
+				                else if v is number then Swap(Date.From(v))
+				                else
+				                    let
+				                        t       = Text.Trim(Text.From(v)),
+				                        Formats = {"dd/MM/yyyy", "d/M/yyyy", "dd-MM-yyyy", "dd.MM.yyyy", "yyyy-MM-dd", "dd/MM/yy"},
+				                        Parsed  = List.First(
+				                                    List.RemoveNulls(
+				                                        List.Transform(Formats, (f) =>
+				                                            try Date.FromText(t, [Format = f, Culture = "en-US"]) otherwise null)),
+				                                    null)
+				                    in
+				                        if t = "" then null else Parsed
+				        in
+				            Result,
+				
+				    ToDecimal = (v as any) as nullable number =>
+				        if v = null then null
+				        else if v is number then v
+				        else
+				            let t = Text.Remove(Text.Trim(Text.From(v)), {" ", "€", "$", Character.FromNumber(160)})
+				            in  if t = "" then null
+				                else try Number.FromText(t, "en-US") otherwise try Number.FromText(t, "fr-FR") otherwise null,
+				
+				    CleanText = (v as any) as nullable text =>
+				        if v = null then null
+				        else let t = Text.Clean(Text.Trim(Text.From(v))) in if t = "" then null else t,
+				
+				    // ---- 5. Cast every column ----------------------------------------------
+				    TypedText = Table.TransformColumns(
+				        NonEmptyRows,
+				        {{"PO Number", CleanText, type text},
+				         {"Supplier",  CleanText, type text},
+				         {"Material",  CleanText, type text},
+				         {"Currency",  each Text.Upper(CleanText(_)), type text},
+				         {"Status",    CleanText, type text}}),
+				
+				    TypedNumbers = Table.TransformColumns(
+				        TypedText,
+				        {{"PO Value (€)", ToDecimal, type number},                       // Decimal Number
+				         {"Ordered Qty",  each let n = ToDecimal(_) in if n = null then null else Int64.From(n), Int64.Type}}),
+				
+				    TypedDates = Table.TransformColumns(
+				        TypedNumbers,
+				        {{"Issue Date",           ToDate, type date},
+				         {"Expedition Date",      ToDate, type date},
+				         {"Planned Arrival Date", ToDate, type date},
+				         {"Actual Arrival Date",  ToDate, type date},
+				         {"Reception Date",       ToDate, type date}}),
+				
+				    // "PO Value (€)" contains EUR and USD amounts (see Currency), so the € is dropped from the name
+				    Renamed = Table.RenameColumns(TypedDates, {{"PO Value (€)", "PO Value"}}),
+				
+				    // ---- 6. Cycle time per PO (null when either date is missing) -----------
+				    AddedCycleTime = Table.AddColumn(
+				        Renamed, "Cycle Time (Days)",
+				        each if [Issue Date] = null or [Reception Date] = null then null
+				             else Duration.Days([Reception Date] - [Issue Date]),
+				        Int64.Type)
+				in
+				    AddedCycleTime
+
+	annotation PBI_ResultType = Table
+

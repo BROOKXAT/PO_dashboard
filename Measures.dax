@@ -1,0 +1,102 @@
+// [KPIs]
+Total PO Numbers =
+DISTINCTCOUNT ( 'PO Data'[PO Number] )
+
+// [KPIs]
+Procurement Cycle Time (Days) =
+AVERAGEX (
+    FILTER (
+        'PO Data',
+        NOT ISBLANK ( 'PO Data'[Issue Date] )
+            && NOT ISBLANK ( 'PO Data'[Reception Date] )
+    ),
+    DATEDIFF ( 'PO Data'[Issue Date], 'PO Data'[Reception Date], DAY )
+)
+
+// [KPIs]
+Total PO Value =
+SUM ( 'PO Data'[PO Value] )
+
+// [KPIs]
+Total Ordered Qty =
+SUM ( 'PO Data'[Ordered Qty] )
+
+// [Rankings]
+Top Supplier =
+VAR Ranked =
+    TOPN (
+        1,
+        ADDCOLUMNS ( VALUES ( 'PO Data'[Supplier] ), "@Value", [Total PO Value] ),
+        [@Value], DESC
+    )
+RETURN
+    CONCATENATEX ( Ranked, 'PO Data'[Supplier], ", " )
+
+// [Rankings]
+Top 5 Materials Qty =
+VAR Qty = [Total Ordered Qty]
+VAR RankNo =
+    RANKX ( ALLSELECTED ( 'PO Data'[Material] ), [Total Ordered Qty], , DESC, DENSE )
+RETURN
+    IF ( NOT ISBLANK ( Qty ) && RankNo <= 5, Qty )
+
+// [Delivery]
+Arrival Days Late =
+VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
+VAR Actual  = COALESCE ( SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] ), TODAY () )  -- not arrived yet: use today
+RETURN
+    IF (
+        ISEMPTY ( 'PO Data' ) || ISBLANK ( Planned ),   -- filtered out, or no planned date
+        BLANK (),
+        DATEDIFF ( Planned, Actual, DAY )
+    )
+
+// [Delivery]
+On-Time Delivery % =
+VAR PerPO =
+    ADDCOLUMNS (
+        VALUES ( 'PO Data'[PO Number] ),
+        "@Late", [Arrival Days Late],
+        "@Arrived", NOT ISBLANK ( CALCULATE ( MAX ( 'PO Data'[Actual Arrival Date] ) ) )
+    )
+-- POs that are due: already arrived, or not arrived and past the planned date
+VAR Evaluated = FILTER ( PerPO, NOT ISBLANK ( [@Late] ) && ( [@Arrived] || [@Late] > 0 ) )
+VAR OnTime    = FILTER ( Evaluated, [@Arrived] && [@Late] <= 0 )
+RETURN
+    DIVIDE ( COUNTROWS ( OnTime ) + 0, COUNTROWS ( Evaluated ) )   -- +0 so a supplier with no on-time POs shows 0%, not blank
+
+// [Delivery]
+Arrival Indicator =
+VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
+VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] )
+VAR Late    = [Arrival Days Late]
+RETURN
+    IF ( ISEMPTY ( 'PO Data' ), BLANK (),   -- PO filtered out by a slicer: hide the row
+    SWITCH (
+        TRUE (),
+        ISBLANK ( Planned ), UNICHAR ( 9898 ),                       -- white: no planned date
+        ISBLANK ( Actual ) && Planned >= TODAY (), UNICHAR ( 128309 ), -- blue: not due yet
+        Late <= 0, UNICHAR ( 128994 ),                               -- green: on time
+        Late <= 7, UNICHAR ( 128992 ),                               -- orange: 1-7 days late
+        UNICHAR ( 128308 )                                           -- red: more than 7 days late
+    ))
+
+// [Delivery]
+Arrival Status =
+VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
+VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] )
+VAR Late    = [Arrival Days Late]
+RETURN
+    IF ( ISEMPTY ( 'PO Data' ), BLANK (),   -- PO filtered out by a slicer: hide the row
+    SWITCH (
+        TRUE (),
+        ISBLANK ( Planned ), "No planned date",
+        ISBLANK ( Actual ) && Planned >= TODAY (),
+            "Upcoming - due in " & DATEDIFF ( TODAY (), Planned, DAY ) & " day(s): confirm ETA with supplier",
+        ISBLANK ( Actual ),
+            "Not arrived - " & Late & " day(s) overdue: expedite with supplier",
+        Late < 0, "Arrived early (" & -Late & " day(s))",
+        Late = 0, "On time",
+        "Arrived " & Late & " day(s) late"
+    ))
+

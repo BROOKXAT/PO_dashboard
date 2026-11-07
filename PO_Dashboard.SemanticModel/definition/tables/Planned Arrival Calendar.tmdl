@@ -1,0 +1,68 @@
+table 'Planned Arrival Calendar'
+	lineageTag: 7f974c5c-86ba-478d-823c-b63408be2224
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: dd/MM/yyyy
+		lineageTag: bd93d690-aaf9-41f1-9cb8-bcd23029c0a9
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 69d6fcfd-d8f9-4fb5-811a-763024bc427b
+		summarizeBy: none
+		sourceColumn: Year
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ea626a72-f011-4b88-beb4-1de2ba5531a3
+		summarizeBy: none
+		sourceColumn: Month Number
+
+	column Month
+		dataType: string
+		lineageTag: 62559c81-8b51-4ffd-8188-d548d6fc9c2f
+		summarizeBy: none
+		sourceColumn: Month
+		sortByColumn: 'Month Key'
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: f8d0d712-6726-43aa-9211-d8bf674df270
+		summarizeBy: none
+		sourceColumn: Month Name
+		sortByColumn: 'Month Number'
+
+	column 'Month Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 59435a73-0a91-4859-bf93-874745400101
+		summarizeBy: none
+		sourceColumn: Month Key
+
+	column 'Week Start'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: cc162cee-6224-4e43-8d32-46021617db0e
+		summarizeBy: none
+		sourceColumn: Week Start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Planned Arrival Calendar' = m
+		mode: import
+		source =
+				let
+				    Source = #"Calendar Base"
+				in
+				    Source
+

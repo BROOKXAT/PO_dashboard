@@ -1,0 +1,45 @@
+{
+  "name": "Pfizer Blue",
+  "dataColors": ["#2B01BE", "#0095FF", "#000485", "#7FC8FF", "#6A4FE0", "#B3DBFF", "#616365", "#4B4F9C"],
+  "background": "#FFFFFF",
+  "foreground": "#10123F",
+  "tableAccent": "#2B01BE",
+  "good": "#00A950",
+  "neutral": "#F8971D",
+  "bad": "#CC292B",
+  "maximum": "#2B01BE",
+  "center": "#0095FF",
+  "minimum": "#E3F2FF",
+  "textClasses": {
+    "callout": { "fontFace": "Segoe UI Semibold", "color": "#2B01BE", "fontSize": 26 },
+    "title":   { "fontFace": "Segoe UI Semibold", "color": "#10123F", "fontSize": 11 },
+    "header":  { "fontFace": "Segoe UI Semibold", "color": "#10123F", "fontSize": 11 },
+    "label":   { "fontFace": "Segoe UI", "color": "#10123F", "fontSize": 10 }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#DCE1F0" } }, "radius": 12 }],
+        "title": [{ "show": true, "fontColor": { "solid": { "color": "#10123F" } }, "fontSize": 11, "fontFamily": "Segoe UI Semibold" }],
+        "dropShadow": [{ "show": false }]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [{ "color": { "solid": { "color": "#2B01BE" } }, "fontSize": 26 }],
+        "accentBar": [{ "show": true, "color": { "solid": { "color": "#0095FF" } } }]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "columnHeaders": [{ "backColor": { "solid": { "color": "#000485" } }, "fontColor": { "solid": { "color": "#FFFFFF" } }, "bold": true }],
+        "values": [{ "backColorPrimary": { "solid": { "color": "#FFFFFF" } }, "backColorSecondary": { "solid": { "color": "#EEF2FC" } }, "fontColorPrimary": { "solid": { "color": "#10123F" } }, "fontColorSecondary": { "solid": { "color": "#10123F" } } }],
+        "grid": [{ "gridHorizontalColor": { "solid": { "color": "#DCE1F0" } } }]
+      }
+    },
+    "lineChart": {
+      "*": { "lineStyles": [{ "strokeWidth": 3 }] }
+    }
+  }
+}

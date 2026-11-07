@@ -1,0 +1,242 @@
+cultureInfo en-GB
+
+	linguisticMetadata =
+			{
+			  "Version": "2.0.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "po_data.top_5_materials_qty": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Top 5 Materials Qty"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Ordered Qty": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.procurement_cycle_time_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Procurement Cycle Time (Days)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Cycle Time (Days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.total_po_value": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Total PO Value"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "PO Value": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.ontime_delivery_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "On-Time Delivery %"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "On-Time %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.total_po_numbers": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Total PO Numbers"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "POs": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.planned_arrival_date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Planned Arrival Date"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Planned Arrival": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.actual_arrival_date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Actual Arrival Date"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Actual Arrival": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.arrival_indicator": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Arrival Indicator"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Indicator": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.arrival_days_late": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Arrival Days Late"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Days Late": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "po_data.arrival_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "PO Data",
+			          "ConceptualProperty": "Arrival Status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Status / Action": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "issue_calendar.week_start": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Issue Calendar",
+			          "ConceptualProperty": "Week Start"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Issue Week": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    }
+			  }
+			}
+		contentType: json
+

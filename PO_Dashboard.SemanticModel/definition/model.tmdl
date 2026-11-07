@@ -1,0 +1,22 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-GB
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["FilePath", "PO Data", "Calendar Base", "Issue Calendar", "Planned Arrival Calendar", "Actual Arrival Calendar", "Reception Calendar"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'PO Data'
+ref table 'Issue Calendar'
+ref table 'Planned Arrival Calendar'
+ref table 'Actual Arrival Calendar'
+ref table 'Reception Calendar'
+
+ref cultureInfo en-GB
+

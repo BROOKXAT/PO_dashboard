@@ -1,0 +1,16 @@
+relationship PO_IssueDate_to_IssueCalendar
+	fromColumn: 'PO Data'.'Issue Date'
+	toColumn: 'Issue Calendar'.Date
+
+relationship PO_PlannedArrivalDate_to_PlannedArrivalCalendar
+	fromColumn: 'PO Data'.'Planned Arrival Date'
+	toColumn: 'Planned Arrival Calendar'.Date
+
+relationship PO_ActualArrivalDate_to_ActualArrivalCalendar
+	fromColumn: 'PO Data'.'Actual Arrival Date'
+	toColumn: 'Actual Arrival Calendar'.Date
+
+relationship PO_ReceptionDate_to_ReceptionCalendar
+	fromColumn: 'PO Data'.'Reception Date'
+	toColumn: 'Reception Calendar'.Date
+
