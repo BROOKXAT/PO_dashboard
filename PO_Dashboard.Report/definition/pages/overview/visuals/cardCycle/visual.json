@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.3.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cardCycle",
   "position": {
-    "x": 478,
-    "y": 47,
+    "x": 1008.096410082322,
+    "y": 45.190528727828223,
     "z": 14000,
-    "width": 254,
     "height": 100,
+    "width": 254,
     "tabOrder": 14000
   },
   "visual": {
@@ -182,5 +182,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "0c1b548ae50b914134d0",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "PO Data"
+              }
+            },
+            "Property": "Procurement Cycle Time (Days)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

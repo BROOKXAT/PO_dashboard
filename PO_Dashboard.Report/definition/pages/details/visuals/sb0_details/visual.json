@@ -3,10 +3,10 @@
   "name": "sb0_details",
   "position": {
     "x": 17,
-    "y": 96,
+    "y": 98,
     "z": 3000,
     "width": 170,
-    "height": 54,
+    "height": 66,
     "tabOrder": 3000
   },
   "visual": {
@@ -199,6 +199,40 @@
               "expr": {
                 "Literal": {
                   "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }

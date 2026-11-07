@@ -100,3 +100,58 @@ RETURN
         "Arrived " & Late & " day(s) late"
     ))
 
+
+// [UI]
+Clear Filters Active =
+-- TRUE when any slicer (sidebar or page) has a selection
+ISFILTERED ( 'Issue Calendar'[Year] )
+    || ISFILTERED ( 'Issue Calendar'[Month Name] )
+    || ISFILTERED ( 'PO Data'[Supplier] )
+    || ISFILTERED ( 'PO Data'[Material] )
+    || ISFILTERED ( 'PO Data'[PO Number] )
+    || ISFILTERED ( 'PO Data'[Status] )
+    || ISFILTERED ( 'Planned Arrival Calendar'[Month] )
+    || ISFILTERED ( 'Actual Arrival Calendar'[Month] )
+    || ISFILTERED ( 'Reception Calendar'[Month] )
+
+// [UI]
+Clear Button Fill = IF ( [Clear Filters Active], "#C2434D", "#FFFFFF" )
+
+// [UI]
+Clear Button Text = IF ( [Clear Filters Active], "#FFFFFF", "#2B01BE" )
+
+// [KPIs]
+Avg Supplier Lead Time (Days) =
+-- Expedition Date - Issue Date; rows with either date blank are skipped (for this average only)
+AVERAGEX (
+    FILTER (
+        'PO Data',
+        NOT ISBLANK ( 'PO Data'[Issue Date] )
+            && NOT ISBLANK ( 'PO Data'[Expedition Date] )
+    ),
+    DATEDIFF ( 'PO Data'[Issue Date], 'PO Data'[Expedition Date], DAY )
+)
+
+// [KPIs]
+Avg Transit Time (Days) =
+-- Actual Arrival Date - Expedition Date; rows with either date blank are skipped (for this average only)
+AVERAGEX (
+    FILTER (
+        'PO Data',
+        NOT ISBLANK ( 'PO Data'[Expedition Date] )
+            && NOT ISBLANK ( 'PO Data'[Actual Arrival Date] )
+    ),
+    DATEDIFF ( 'PO Data'[Expedition Date], 'PO Data'[Actual Arrival Date], DAY )
+)
+
+// [KPIs]
+Avg Local Customs Time (Days) =
+-- Reception Date - Actual Arrival Date; rows with either date blank are skipped (for this average only)
+AVERAGEX (
+    FILTER (
+        'PO Data',
+        NOT ISBLANK ( 'PO Data'[Actual Arrival Date] )
+            && NOT ISBLANK ( 'PO Data'[Reception Date] )
+    ),
+    DATEDIFF ( 'PO Data'[Actual Arrival Date], 'PO Data'[Reception Date], DAY )
+)

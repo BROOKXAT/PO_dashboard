@@ -3,9 +3,9 @@
   "name": "tableArrival",
   "position": {
     "x": 214,
-    "y": 115,
+    "y": 121,
     "z": 15000,
-    "height": 440,
+    "height": 434,
     "width": 620,
     "tabOrder": 15000
   },

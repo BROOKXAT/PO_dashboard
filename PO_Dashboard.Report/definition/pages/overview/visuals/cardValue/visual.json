@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cardValue",
   "position": {
-    "x": 742,
-    "y": 47,
+    "x": 476.238648900959,
+    "y": 45.190528727828223,
     "z": 15000,
     "height": 100,
     "width": 254,

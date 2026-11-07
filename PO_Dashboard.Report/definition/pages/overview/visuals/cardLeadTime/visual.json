@@ -1,38 +1,19 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
-  "name": "colCycleSupplier",
+  "name": "cardLeadTime",
   "position": {
-    "x": 740,
-    "y": 435,
+    "x": 1009.64143257235,
+    "y": 154.11129027695193,
     "z": 20000,
-    "height": 267,
-    "width": 521,
+    "height": 83.428668420605959,
+    "width": 252.60346827350136,
     "tabOrder": 20000
   },
   "visual": {
-    "visualType": "clusteredColumnChart",
+    "visualType": "card",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "PO Data"
-                    }
-                  },
-                  "Property": "Supplier"
-                }
-              },
-              "queryRef": "PO Data.Supplier",
-              "nativeQueryRef": "Supplier",
-              "active": true
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -42,42 +23,48 @@
                       "Entity": "PO Data"
                     }
                   },
-                  "Property": "Procurement Cycle Time (Days)"
+                  "Property": "Avg Supplier Lead Time (Days)"
                 }
               },
-              "queryRef": "PO Data.Procurement Cycle Time (Days)",
-              "nativeQueryRef": "Procurement Cycle Time (Days)",
-              "displayName": "Cycle Time (Days)"
+              "queryRef": "PO Data.Avg Supplier Lead Time (Days)",
+              "nativeQueryRef": "Avg Supplier Lead Time (Days)"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "PO Data"
-                  }
-                },
-                "Property": "Procurement Cycle Time (Days)"
-              }
-            },
-            "direction": "Descending"
-          }
-        ]
       }
     },
     "objects": {
-      "labels": [
+      "categoryLabels": [
         {
           "properties": {
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#2B01BE'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
                 }
               }
             }
@@ -99,7 +86,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Avg Cycle Time by Supplier (Days)'"
+                  "Value": "'Avg Supplier Lead Time (Days)'"
                 }
               }
             },
@@ -195,5 +182,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "5be65633a18d3031b1dc",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "PO Data"
+              }
+            },
+            "Property": "Avg Supplier Lead Time (Days)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

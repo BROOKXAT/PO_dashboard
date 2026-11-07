@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "lineCostTrend",
   "position": {
-    "x": 214,
-    "y": 157,
+    "x": 214.36532858072363,
+    "y": 155.27002178279443,
     "z": 17000,
-    "height": 268,
-    "width": 640,
+    "height": 267.66697784944409,
+    "width": 760.12786783218758,
     "tabOrder": 17000
   },
   "visual": {
@@ -197,5 +197,37 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "5cd0091cec0770947ee1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Issue Calendar"
+              }
+            },
+            "Property": "Week Start"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "e3ade1f0a5ae07d4c076",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "PO Data"
+              }
+            },
+            "Property": "Total PO Value"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

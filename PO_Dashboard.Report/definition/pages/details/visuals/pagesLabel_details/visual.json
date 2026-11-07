@@ -3,10 +3,10 @@
   "name": "pagesLabel_details",
   "position": {
     "x": 17,
-    "y": 446,
+    "y": 510,
     "z": 9000,
     "width": 170,
-    "height": 22,
+    "height": 26,
     "tabOrder": 9000
   },
   "visual": {
@@ -54,6 +54,40 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }

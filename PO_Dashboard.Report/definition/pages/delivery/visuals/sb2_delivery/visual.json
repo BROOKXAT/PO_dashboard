@@ -3,10 +3,10 @@
   "name": "sb2_delivery",
   "position": {
     "x": 17,
-    "y": 212,
+    "y": 242,
     "z": 5000,
     "width": 170,
-    "height": 54,
+    "height": 66,
     "tabOrder": 5000
   },
   "visual": {
@@ -212,6 +212,40 @@
               "expr": {
                 "Literal": {
                   "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }

@@ -117,6 +117,70 @@ table 'PO Data'
 		displayFolder: Delivery
 		lineageTag: 1fd48578-5472-4b2b-afcb-ca3bef91669d
 
+	measure 'Clear Filters Active' =
+			-- TRUE when any slicer (sidebar or page) has a selection
+			ISFILTERED ( 'Issue Calendar'[Year] )
+			    || ISFILTERED ( 'Issue Calendar'[Month Name] )
+			    || ISFILTERED ( 'PO Data'[Supplier] )
+			    || ISFILTERED ( 'PO Data'[Material] )
+			    || ISFILTERED ( 'PO Data'[PO Number] )
+			    || ISFILTERED ( 'PO Data'[Status] )
+			    || ISFILTERED ( 'Planned Arrival Calendar'[Month] )
+			    || ISFILTERED ( 'Actual Arrival Calendar'[Month] )
+			    || ISFILTERED ( 'Reception Calendar'[Month] )
+		displayFolder: UI
+		lineageTag: 105d22d6-5fb5-40c8-b5c4-6460c6aaea99
+
+	measure 'Clear Button Fill' = IF ( [Clear Filters Active], "#C2434D", "#FFFFFF" )
+		displayFolder: UI
+		lineageTag: dd2f2b4c-de63-4f44-bc1f-e1c9f07a9a69
+
+	measure 'Clear Button Text' = IF ( [Clear Filters Active], "#FFFFFF", "#2B01BE" )
+		displayFolder: UI
+		lineageTag: 85a441cf-cfd8-4f80-a3bd-5b063645624e
+
+	measure 'Avg Supplier Lead Time (Days)' =
+			-- Expedition Date - Issue Date; rows with either date blank are skipped (for this average only)
+			AVERAGEX (
+			    FILTER (
+			        'PO Data',
+			        NOT ISBLANK ( 'PO Data'[Issue Date] )
+			            && NOT ISBLANK ( 'PO Data'[Expedition Date] )
+			    ),
+			    DATEDIFF ( 'PO Data'[Issue Date], 'PO Data'[Expedition Date], DAY )
+			)
+		formatString: #,0.0
+		displayFolder: KPIs
+		lineageTag: e72a6440-efe0-4046-b103-8c4bd2421be8
+
+	measure 'Avg Transit Time (Days)' =
+			-- Actual Arrival Date - Expedition Date; rows with either date blank are skipped (for this average only)
+			AVERAGEX (
+			    FILTER (
+			        'PO Data',
+			        NOT ISBLANK ( 'PO Data'[Expedition Date] )
+			            && NOT ISBLANK ( 'PO Data'[Actual Arrival Date] )
+			    ),
+			    DATEDIFF ( 'PO Data'[Expedition Date], 'PO Data'[Actual Arrival Date], DAY )
+			)
+		formatString: #,0.0
+		displayFolder: KPIs
+		lineageTag: 8f1ac36c-de88-4cf2-bdd9-cc66d83af4ee
+
+	measure 'Avg Local Customs Time (Days)' =
+			-- Reception Date - Actual Arrival Date; rows with either date blank are skipped (for this average only)
+			AVERAGEX (
+			    FILTER (
+			        'PO Data',
+			        NOT ISBLANK ( 'PO Data'[Actual Arrival Date] )
+			            && NOT ISBLANK ( 'PO Data'[Reception Date] )
+			    ),
+			    DATEDIFF ( 'PO Data'[Actual Arrival Date], 'PO Data'[Reception Date], DAY )
+			)
+		formatString: #,0.0
+		displayFolder: KPIs
+		lineageTag: f0dfa641-4c52-4eea-aa21-9a98344b27dc
+
 	column 'PO Number'
 		dataType: string
 		lineageTag: d35e48f5-dc5b-4e37-a689-e6df11c1ce0b

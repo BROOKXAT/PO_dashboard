@@ -3,10 +3,10 @@
   "name": "filtersLabel_details",
   "position": {
     "x": 17,
-    "y": 72,
+    "y": 70,
     "z": 2000,
     "width": 170,
-    "height": 22,
+    "height": 26,
     "tabOrder": 2000
   },
   "visual": {
@@ -54,6 +54,40 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }

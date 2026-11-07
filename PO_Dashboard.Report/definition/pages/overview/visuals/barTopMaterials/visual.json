@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "barTopMaterials",
   "position": {
-    "x": 214,
-    "y": 435,
+    "x": 214.36532858072363,
+    "y": 441.4767037257065,
     "z": 19000,
-    "height": 267,
-    "width": 516,
+    "height": 266.50824634360237,
+    "width": 639.61979122464561,
     "tabOrder": 19000
   },
   "visual": {
@@ -195,5 +195,37 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "63e08570beba08c34a38",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "PO Data"
+              }
+            },
+            "Property": "Material"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "3753a77a65c17db04b00",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "PO Data"
+              }
+            },
+            "Property": "Top 5 Materials Qty"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }
