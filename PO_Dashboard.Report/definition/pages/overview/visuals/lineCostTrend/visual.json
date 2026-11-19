@@ -5,8 +5,8 @@
     "x": 214.36532858072363,
     "y": 155.27002178279443,
     "z": 17000,
-    "height": 267.66697784944409,
-    "width": 760.12786783218758,
+    "height": 267.6669778494441,
+    "width": 760.1278678321876,
     "tabOrder": 17000
   },
   "visual": {
@@ -20,16 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Issue Calendar"
+                      "Entity": "Order Calendar"
                     }
                   },
-                  "Property": "Week Start"
+                  "Property": "Month"
                 }
               },
-              "queryRef": "Issue Calendar.Week Start",
-              "nativeQueryRef": "Week Start",
+              "queryRef": "Order Calendar.Month",
+              "nativeQueryRef": "Month",
               "active": true,
-              "displayName": "Issue Week"
+              "displayName": "Order Month"
             }
           ]
         },
@@ -52,6 +52,24 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Order Calendar"
+                  }
+                },
+                "Property": "Month"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
       }
     },
     "objects": {
@@ -101,7 +119,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cost Trend - PO Value by Issue Week'"
+                  "Value": "'Cost Trend - PO Value by Order Month'"
                 }
               }
             },
@@ -206,10 +224,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Issue Calendar"
+                "Entity": "Order Calendar"
               }
             },
-            "Property": "Week Start"
+            "Property": "Month"
           }
         },
         "type": "Categorical"

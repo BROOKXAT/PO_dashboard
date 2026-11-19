@@ -123,7 +123,7 @@ cultureInfo en-GB
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "PO Data",
-			          "ConceptualProperty": "Actual Arrival Date"
+			          "ConceptualProperty": "Actual arrival date Transit"
 			        }
 			      },
 			      "State": "Generated",
@@ -203,17 +203,17 @@ cultureInfo en-GB
 			        }
 			      ]
 			    },
-			    "issue_calendar.week_start": {
+			    "order_calendar.week_start": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Issue Calendar",
+			          "ConceptualEntity": "Order Calendar",
 			          "ConceptualProperty": "Week Start"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Issue Week": {
+			          "Order Week": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

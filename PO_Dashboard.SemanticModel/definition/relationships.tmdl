@@ -1,13 +1,13 @@
-relationship PO_IssueDate_to_IssueCalendar
-	fromColumn: 'PO Data'.'Issue Date'
-	toColumn: 'Issue Calendar'.Date
+relationship PO_OrderDate_to_OrderCalendar
+	fromColumn: 'PO Data'.'Order Date'
+	toColumn: 'Order Calendar'.Date
 
 relationship PO_PlannedArrivalDate_to_PlannedArrivalCalendar
 	fromColumn: 'PO Data'.'Planned Arrival Date'
 	toColumn: 'Planned Arrival Calendar'.Date
 
 relationship PO_ActualArrivalDate_to_ActualArrivalCalendar
-	fromColumn: 'PO Data'.'Actual Arrival Date'
+	fromColumn: 'PO Data'.'Actual arrival date Transit'
 	toColumn: 'Actual Arrival Calendar'.Date
 
 relationship PO_ReceptionDate_to_ReceptionCalendar

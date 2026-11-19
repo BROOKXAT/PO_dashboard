@@ -9,6 +9,9 @@
     },
     {
       "name": "bmReset_details"
+    },
+    {
+      "name": "bmReset_gr"
     }
   ]
 }

@@ -65,6 +65,20 @@
                       "Entity": "PO Data"
                     }
                   },
+                  "Property": "Material Description"
+                }
+              },
+              "queryRef": "PO Data.Material Description",
+              "nativeQueryRef": "Material Description"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
                   "Property": "Status"
                 }
               },
@@ -79,11 +93,11 @@
                       "Entity": "PO Data"
                     }
                   },
-                  "Property": "Issue Date"
+                  "Property": "Order Date"
                 }
               },
-              "queryRef": "PO Data.Issue Date",
-              "nativeQueryRef": "Issue Date"
+              "queryRef": "PO Data.Order Date",
+              "nativeQueryRef": "Order Date"
             },
             {
               "field": {
@@ -93,11 +107,11 @@
                       "Entity": "PO Data"
                     }
                   },
-                  "Property": "Expedition Date"
+                  "Property": "Expedition Date from Supplier"
                 }
               },
-              "queryRef": "PO Data.Expedition Date",
-              "nativeQueryRef": "Expedition Date"
+              "queryRef": "PO Data.Expedition Date from Supplier",
+              "nativeQueryRef": "Expedition Date from Supplier"
             },
             {
               "field": {
@@ -121,11 +135,11 @@
                       "Entity": "PO Data"
                     }
                   },
-                  "Property": "Actual Arrival Date"
+                  "Property": "Actual arrival date Transit"
                 }
               },
-              "queryRef": "PO Data.Actual Arrival Date",
-              "nativeQueryRef": "Actual Arrival Date"
+              "queryRef": "PO Data.Actual arrival date Transit",
+              "nativeQueryRef": "Actual arrival date Transit"
             },
             {
               "field": {
@@ -168,6 +182,20 @@
               },
               "queryRef": "PO Data.Ordered Qty",
               "nativeQueryRef": "Ordered Qty"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PO Data"
+                    }
+                  },
+                  "Property": "UoM"
+                }
+              },
+              "queryRef": "PO Data.UoM",
+              "nativeQueryRef": "UoM"
             },
             {
               "field": {

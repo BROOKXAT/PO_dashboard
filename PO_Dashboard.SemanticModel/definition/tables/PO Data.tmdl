@@ -10,10 +10,10 @@ table 'PO Data'
 			AVERAGEX (
 			    FILTER (
 			        'PO Data',
-			        NOT ISBLANK ( 'PO Data'[Issue Date] )
+			        NOT ISBLANK ( 'PO Data'[Order Date] )
 			            && NOT ISBLANK ( 'PO Data'[Reception Date] )
 			    ),
-			    DATEDIFF ( 'PO Data'[Issue Date], 'PO Data'[Reception Date], DAY )
+			    DATEDIFF ( 'PO Data'[Order Date], 'PO Data'[Reception Date], DAY )
 			)
 		formatString: #,0.0
 		displayFolder: KPIs
@@ -53,7 +53,7 @@ table 'PO Data'
 
 	measure 'Arrival Days Late' =
 			VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
-			VAR Actual  = COALESCE ( SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] ), TODAY () )  -- not arrived yet: use today
+			VAR Actual  = COALESCE ( SELECTEDVALUE ( 'PO Data'[Actual arrival date Transit] ), TODAY () )  -- not arrived yet: use today
 			RETURN
 			    IF (
 			        ISEMPTY ( 'PO Data' ) || ISBLANK ( Planned ),   -- filtered out, or no planned date
@@ -69,7 +69,7 @@ table 'PO Data'
 			    ADDCOLUMNS (
 			        VALUES ( 'PO Data'[PO Number] ),
 			        "@Late", [Arrival Days Late],
-			        "@Arrived", NOT ISBLANK ( CALCULATE ( MAX ( 'PO Data'[Actual Arrival Date] ) ) )
+			        "@Arrived", NOT ISBLANK ( CALCULATE ( MAX ( 'PO Data'[Actual arrival date Transit] ) ) )
 			    )
 			-- POs that are due: already arrived, or not arrived and past the planned date
 			VAR Evaluated = FILTER ( PerPO, NOT ISBLANK ( [@Late] ) && ( [@Arrived] || [@Late] > 0 ) )
@@ -82,7 +82,7 @@ table 'PO Data'
 
 	measure 'Arrival Indicator' =
 			VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
-			VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] )
+			VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual arrival date Transit] )
 			VAR Late    = [Arrival Days Late]
 			RETURN
 			    IF ( ISEMPTY ( 'PO Data' ), BLANK (),   -- PO filtered out by a slicer: hide the row
@@ -90,16 +90,16 @@ table 'PO Data'
 			        TRUE (),
 			        ISBLANK ( Planned ), UNICHAR ( 9898 ),                       -- white: no planned date
 			        ISBLANK ( Actual ) && Planned >= TODAY (), UNICHAR ( 128309 ), -- blue: not due yet
-			        Late <= 0, UNICHAR ( 128994 ),                               -- green: on time
-			        Late <= 7, UNICHAR ( 128992 ),                               -- orange: 1-7 days late
-			        UNICHAR ( 128308 )                                           -- red: more than 7 days late
+			        Late <= 7, UNICHAR ( 128994 ),                               -- green: on time, early, or up to 7 days late
+			        Late <= 21, UNICHAR ( 128992 ),                              -- orange: 8-21 days late
+			        UNICHAR ( 128308 )                                           -- red: more than 21 days late
 			    ))
 		displayFolder: Delivery
 		lineageTag: d71e4aeb-4b5b-4766-8b1a-71061e5bea97
 
 	measure 'Arrival Status' =
 			VAR Planned = SELECTEDVALUE ( 'PO Data'[Planned Arrival Date] )
-			VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual Arrival Date] )
+			VAR Actual  = SELECTEDVALUE ( 'PO Data'[Actual arrival date Transit] )
 			VAR Late    = [Arrival Days Late]
 			RETURN
 			    IF ( ISEMPTY ( 'PO Data' ), BLANK (),   -- PO filtered out by a slicer: hide the row
@@ -119,8 +119,8 @@ table 'PO Data'
 
 	measure 'Clear Filters Active' =
 			-- TRUE when any slicer (sidebar or page) has a selection
-			ISFILTERED ( 'Issue Calendar'[Year] )
-			    || ISFILTERED ( 'Issue Calendar'[Month Name] )
+			ISFILTERED ( 'Order Calendar'[Year] )
+			    || ISFILTERED ( 'Order Calendar'[Month Name] )
 			    || ISFILTERED ( 'PO Data'[Supplier] )
 			    || ISFILTERED ( 'PO Data'[Material] )
 			    || ISFILTERED ( 'PO Data'[PO Number] )
@@ -140,42 +140,42 @@ table 'PO Data'
 		lineageTag: 85a441cf-cfd8-4f80-a3bd-5b063645624e
 
 	measure 'Avg Supplier Lead Time (Days)' =
-			-- Expedition Date - Issue Date; rows with either date blank are skipped (for this average only)
+			-- Expedition Date from Supplier - Order Date; rows with either date blank are skipped (for this average only)
 			AVERAGEX (
 			    FILTER (
 			        'PO Data',
-			        NOT ISBLANK ( 'PO Data'[Issue Date] )
-			            && NOT ISBLANK ( 'PO Data'[Expedition Date] )
+			        NOT ISBLANK ( 'PO Data'[Order Date] )
+			            && NOT ISBLANK ( 'PO Data'[Expedition Date from Supplier] )
 			    ),
-			    DATEDIFF ( 'PO Data'[Issue Date], 'PO Data'[Expedition Date], DAY )
+			    DATEDIFF ( 'PO Data'[Order Date], 'PO Data'[Expedition Date from Supplier], DAY )
 			)
 		formatString: #,0.0
 		displayFolder: KPIs
 		lineageTag: e72a6440-efe0-4046-b103-8c4bd2421be8
 
 	measure 'Avg Transit Time (Days)' =
-			-- Actual Arrival Date - Expedition Date; rows with either date blank are skipped (for this average only)
+			-- Actual arrival date Transit - Expedition Date from Supplier; rows with either date blank are skipped (for this average only)
 			AVERAGEX (
 			    FILTER (
 			        'PO Data',
-			        NOT ISBLANK ( 'PO Data'[Expedition Date] )
-			            && NOT ISBLANK ( 'PO Data'[Actual Arrival Date] )
+			        NOT ISBLANK ( 'PO Data'[Expedition Date from Supplier] )
+			            && NOT ISBLANK ( 'PO Data'[Actual arrival date Transit] )
 			    ),
-			    DATEDIFF ( 'PO Data'[Expedition Date], 'PO Data'[Actual Arrival Date], DAY )
+			    DATEDIFF ( 'PO Data'[Expedition Date from Supplier], 'PO Data'[Actual arrival date Transit], DAY )
 			)
 		formatString: #,0.0
 		displayFolder: KPIs
 		lineageTag: 8f1ac36c-de88-4cf2-bdd9-cc66d83af4ee
 
 	measure 'Avg Local Customs Time (Days)' =
-			-- Reception Date - Actual Arrival Date; rows with either date blank are skipped (for this average only)
+			-- Reception Date - Actual arrival date Transit; rows with either date blank are skipped (for this average only)
 			AVERAGEX (
 			    FILTER (
 			        'PO Data',
-			        NOT ISBLANK ( 'PO Data'[Actual Arrival Date] )
+			        NOT ISBLANK ( 'PO Data'[Actual arrival date Transit] )
 			            && NOT ISBLANK ( 'PO Data'[Reception Date] )
 			    ),
-			    DATEDIFF ( 'PO Data'[Actual Arrival Date], 'PO Data'[Reception Date], DAY )
+			    DATEDIFF ( 'PO Data'[Actual arrival date Transit], 'PO Data'[Reception Date], DAY )
 			)
 		formatString: #,0.0
 		displayFolder: KPIs
@@ -199,6 +199,12 @@ table 'PO Data'
 		summarizeBy: none
 		sourceColumn: Material
 
+	column 'Material Description'
+		dataType: string
+		lineageTag: 3f6c2a91-7d4e-4b8a-9c15-2e7a0d6b54f1
+		summarizeBy: none
+		sourceColumn: Material Description
+
 	column 'PO Value'
 		dataType: double
 		formatString: #,0.00
@@ -219,21 +225,27 @@ table 'PO Data'
 		summarizeBy: none
 		sourceColumn: Ordered Qty
 
-	column 'Issue Date'
+	column UoM
+		dataType: string
+		lineageTag: 8b2e5d17-46a3-4f0c-b9e2-71c3d8a4f6e0
+		summarizeBy: none
+		sourceColumn: UoM
+
+	column 'Order Date'
 		dataType: dateTime
 		formatString: dd/MM/yyyy
 		lineageTag: b32bc6e2-17ae-4416-848c-c7cfd608161c
 		summarizeBy: none
-		sourceColumn: Issue Date
+		sourceColumn: Order Date
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column 'Expedition Date'
+	column 'Expedition Date from Supplier'
 		dataType: dateTime
 		formatString: dd/MM/yyyy
 		lineageTag: e9ef9553-baa1-4ab7-a395-6aa9871dab31
 		summarizeBy: none
-		sourceColumn: Expedition Date
+		sourceColumn: Expedition Date from Supplier
 
 		annotation UnderlyingDateTimeDataType = Date
 
@@ -246,12 +258,12 @@ table 'PO Data'
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column 'Actual Arrival Date'
+	column 'Actual arrival date Transit'
 		dataType: dateTime
 		formatString: dd/MM/yyyy
 		lineageTag: f1a20bd4-b8e9-4d1d-90dd-5e72a04b5fe4
 		summarizeBy: none
-		sourceColumn: Actual Arrival Date
+		sourceColumn: Actual arrival date Transit
 
 		annotation UnderlyingDateTimeDataType = Date
 
@@ -282,22 +294,49 @@ table 'PO Data'
 		source =
 				// ============================================================================
 				// Power Query (M) – table "PO Data"
-				// Source: DB_DATA2.xlsx / Sheet1
-				// Requires a text parameter named FilePath = full path to DB_DATA2.xlsx
+				// Source: the Excel file in the FilePath parameter (PO_Tracking_Dummy.xlsx).
+				// Reads the sheet named in SheetName (case and extra spaces ignored).
+				// Column names = the headers of that sheet.
 				// ============================================================================
 				let
-				    // ---- 1. Load -----------------------------------------------------------
-				    Source      = Excel.Workbook(File.Contents(FilePath), null, true),
-				    Sheet       = Source{[Item = "Sheet1", Kind = "Sheet"]}[Data],
-				    Promoted    = Table.PromoteHeaders(Sheet, [PromoteAllScalars = true]),
+				    SheetName = "Supply Tracking",
 				
-				    // ---- 2. Keep only real columns (drops the empty 13th column) -----------
-				    KeptColumns = Table.SelectColumns(
-				        Promoted,
-				        {"PO Number", "Supplier", "Material", "PO Value (€)", "Currency", "Ordered Qty",
-				         "Issue Date", "Expedition Date", "Planned Arrival Date", "Actual Arrival Date",
-				         "Reception Date", "Status"},
-				        MissingField.UseNull),
+				    // ---- 1. Load -----------------------------------------------------------
+				    Source   = Excel.Workbook(File.Contents(FilePath), true, true),   // true = first row is the header
+				    Sheets   = Table.SelectRows(Source, each [Kind] = "Sheet"),
+				    Matching = Table.SelectRows(Sheets, each Text.Lower(Text.Trim([Name])) = Text.Lower(SheetName)),
+				    Raw      =
+				        if not Table.IsEmpty(Matching) then Matching{0}[Data]
+				        else error Error.Record(
+				            "Sheet not found",
+				            "No sheet named '" & SheetName & "' in " & FilePath
+				                & ". Sheets found: " & Text.Combine(Sheets[Name], ", ")),
+				
+				    // Header cleanup: trim, drop line breaks, collapse double spaces
+				    CleanHeaders = Table.TransformColumnNames(
+				        Raw,
+				        each Text.Combine(List.Select(Text.SplitAny(Text.Clean(Text.From(_)), " #(00A0)"), (w) => w <> ""), " ")),
+				
+				    // ---- 2. Expected columns (headers of PO_Tracking_Dummy.xlsx) -----------
+				    // Matched case-insensitively, so "Order date" or "ORDER DATE" also work.
+				    Columns = {
+				        "PO Number", "Supplier", "Material", "Material Description", "PO Value", "Currency",
+				        "Ordered Qty", "UoM", "Order Date", "Expedition Date from Supplier", "Planned Arrival Date",
+				        "Actual arrival date Transit", "Reception Date", "Status"
+				    },
+				    ExcelHeaders = Table.ColumnNames(CleanHeaders),
+				    FindHeader = (name as text) as nullable text =>
+				        List.First(List.Select(ExcelHeaders, (h) => Text.Lower(h) = Text.Lower(name)), null),
+				    Matches  = List.Transform(Columns, (c) => {FindHeader(c), c}),
+				    Missing  = List.Transform(List.Select(Matches, each _{0} = null), each _{1}),
+				    Renames  = List.Select(Matches, each _{0} <> null and _{0} <> _{1}),
+				    Renamed  =
+				        if List.IsEmpty(Missing) then Table.RenameColumns(CleanHeaders, Renames)
+				        else error Error.Record(
+				            "Missing columns",
+				            "Not found in the Excel file: " & Text.Combine(Missing, ", ")
+				                & ". Headers found: " & Text.Combine(ExcelHeaders, ", ")),
+				    KeptColumns = Table.SelectColumns(Renamed, Columns),
 				
 				    // ---- 3. Drop empty rows ------------------------------------------------
 				    NonEmptyRows = Table.SelectRows(
@@ -305,10 +344,10 @@ table 'PO Data'
 				        each [PO Number] <> null and Text.Trim(Text.From([PO Number])) <> ""),
 				
 				    // ---- 4. Helper functions -----------------------------------------------
-				    // Excel cells that were stored as real dates were typed dd/mm but read as
-				    // mm/dd (e.g. 08/01/2026 stored as 1-Aug-2026). They get day/month swapped.
+				    // PO_Tracking_Dummy.xlsx stores real Excel dates, so no day/month swap.
+				    // Set to true only for files where dd/mm dates were read as mm/dd.
 				    // Text cells such as "20/01/2026" are parsed as dd/MM/yyyy.
-				    SwapDayMonthOnExcelDates = true,
+				    SwapDayMonthOnExcelDates = false,
 				
 				    ToDate = (v as any) as nullable date =>
 				        let
@@ -350,33 +389,32 @@ table 'PO Data'
 				    // ---- 5. Cast every column ----------------------------------------------
 				    TypedText = Table.TransformColumns(
 				        NonEmptyRows,
-				        {{"PO Number", CleanText, type text},
-				         {"Supplier",  CleanText, type text},
-				         {"Material",  CleanText, type text},
-				         {"Currency",  each Text.Upper(CleanText(_)), type text},
-				         {"Status",    CleanText, type text}}),
+				        {{"PO Number",            CleanText, type text},
+				         {"Supplier",             CleanText, type text},
+				         {"Material",             CleanText, type text},
+				         {"Material Description", CleanText, type text},
+				         {"Currency",             each Text.Upper(CleanText(_)), type text},
+				         {"UoM",                  each Text.Upper(CleanText(_)), type text},
+				         {"Status",               CleanText, type text}}),
 				
 				    TypedNumbers = Table.TransformColumns(
 				        TypedText,
-				        {{"PO Value (€)", ToDecimal, type number},                       // Decimal Number
-				         {"Ordered Qty",  each let n = ToDecimal(_) in if n = null then null else Int64.From(n), Int64.Type}}),
+				        {{"PO Value",    ToDecimal, type number},                       // Decimal Number
+				         {"Ordered Qty", each let n = ToDecimal(_) in if n = null then null else Int64.From(n), Int64.Type}}),
 				
 				    TypedDates = Table.TransformColumns(
 				        TypedNumbers,
-				        {{"Issue Date",           ToDate, type date},
-				         {"Expedition Date",      ToDate, type date},
-				         {"Planned Arrival Date", ToDate, type date},
-				         {"Actual Arrival Date",  ToDate, type date},
-				         {"Reception Date",       ToDate, type date}}),
-				
-				    // "PO Value (€)" contains EUR and USD amounts (see Currency), so the € is dropped from the name
-				    Renamed = Table.RenameColumns(TypedDates, {{"PO Value (€)", "PO Value"}}),
+				        {{"Order Date",                    ToDate, type date},
+				         {"Expedition Date from Supplier", ToDate, type date},
+				         {"Planned Arrival Date",          ToDate, type date},
+				         {"Actual arrival date Transit",   ToDate, type date},
+				         {"Reception Date",                ToDate, type date}}),
 				
 				    // ---- 6. Cycle time per PO (null when either date is missing) -----------
 				    AddedCycleTime = Table.AddColumn(
-				        Renamed, "Cycle Time (Days)",
-				        each if [Issue Date] = null or [Reception Date] = null then null
-				             else Duration.Days([Reception Date] - [Issue Date]),
+				        TypedDates, "Cycle Time (Days)",
+				        each if [Order Date] = null or [Reception Date] = null then null
+				             else Duration.Days([Reception Date] - [Order Date]),
 				        Int64.Type)
 				in
 				    AddedCycleTime

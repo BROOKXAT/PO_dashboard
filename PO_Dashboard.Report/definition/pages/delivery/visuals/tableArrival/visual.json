@@ -66,11 +66,11 @@
                       "Entity": "PO Data"
                     }
                   },
-                  "Property": "Actual Arrival Date"
+                  "Property": "Actual arrival date Transit"
                 }
               },
-              "queryRef": "PO Data.Actual Arrival Date",
-              "nativeQueryRef": "Actual Arrival Date",
+              "queryRef": "PO Data.Actual arrival date Transit",
+              "nativeQueryRef": "Actual arrival date Transit",
               "displayName": "Actual Arrival"
             },
             {

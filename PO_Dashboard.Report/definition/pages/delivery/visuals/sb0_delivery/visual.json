@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Issue Calendar"
+                      "Entity": "Order Calendar"
                     }
                   },
                   "Property": "Year"
                 }
               },
-              "queryRef": "Issue Calendar.Year",
+              "queryRef": "Order Calendar.Year",
               "nativeQueryRef": "Year",
               "active": true
             }
@@ -111,7 +111,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Issue Year'"
+                  "Value": "'Order Year'"
                 }
               }
             },
@@ -241,7 +241,7 @@
       ]
     },
     "syncGroup": {
-      "groupName": "sync_IssueYear",
+      "groupName": "sync_OrderYear",
       "fieldChanges": true,
       "filterChanges": true
     },

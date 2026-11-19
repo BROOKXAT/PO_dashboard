@@ -1,4 +1,4 @@
-table 'Issue Calendar'
+table 'Order Calendar'
 	lineageTag: 25c61c3d-1818-45ca-b6ab-1d6aae2be476
 	dataCategory: Time
 
@@ -58,7 +58,7 @@ table 'Issue Calendar'
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	partition 'Issue Calendar' = m
+	partition 'Order Calendar' = m
 		mode: import
 		source =
 				let

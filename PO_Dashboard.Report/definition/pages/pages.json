@@ -3,7 +3,8 @@
   "pageOrder": [
     "overview",
     "delivery",
-    "details"
+    "details",
+    "gr"
   ],
   "activePageName": "overview"
 }

@@ -1,0 +1,297 @@
+table 'GR Log'
+	lineageTag: 3866e78d-874e-4746-8668-581043206351
+
+	measure 'GR Days Late' =
+			VAR Planned  = SELECTEDVALUE ( 'GR Log'[Delivery Date] )
+			VAR Received = COALESCE ( SELECTEDVALUE ( 'GR Log'[GR Date] ), TODAY () )  -- not received yet: use today
+			RETURN
+			    IF (
+			        ISEMPTY ( 'GR Log' ) || ISBLANK ( Planned ),   -- filtered out, or no delivery date
+			        BLANK (),
+			        DATEDIFF ( Planned, Received, DAY )
+			    )
+		formatString: 0
+		displayFolder: Goods Receipt
+		lineageTag: 0e40887a-dfbd-488b-a51d-40af72cfbb12
+
+	measure 'GR Indicator' =
+			VAR Planned  = SELECTEDVALUE ( 'GR Log'[Delivery Date] )
+			VAR Received = SELECTEDVALUE ( 'GR Log'[GR Date] )
+			VAR Late     = [GR Days Late]
+			RETURN
+			    IF ( ISEMPTY ( 'GR Log' ), BLANK (),   -- line filtered out by a slicer: hide the row
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Planned ), UNICHAR ( 9898 ),                        -- white: no delivery date
+			        ISBLANK ( Received ) && Planned >= TODAY (), UNICHAR ( 128309 ), -- blue: not received, not due yet
+			        Late <= 1, UNICHAR ( 128994 ),                                -- green: early, on time or 1 day late
+			        Late <= 3, UNICHAR ( 128992 ),                                -- orange: 2-3 days late
+			        UNICHAR ( 128308 )                                            -- red: more than 3 days late
+			    ))
+		displayFolder: Goods Receipt
+		lineageTag: c01f3534-c64e-4136-a6ab-0d5cfded656b
+
+	measure 'Expiry Status' =
+			-- Only batches whose expiry date falls in the current month; blank otherwise (hides the row).
+			-- Expired / not yet expired comes from the Excel column Days to Expiry.
+			VAR Expiry   = SELECTEDVALUE ( 'GR Log'[Expiry Date] )
+			VAR DaysLeft = SELECTEDVALUE ( 'GR Log'[Days to Expiry] )
+			VAR ThisMonth =
+			    YEAR ( Expiry ) = YEAR ( TODAY () ) && MONTH ( Expiry ) = MONTH ( TODAY () )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Expiry ) || ISBLANK ( DaysLeft ) || NOT ThisMonth, BLANK (),
+			        DaysLeft < 0, UNICHAR ( 128308 ) & "  Already expired",
+			        UNICHAR ( 128992 ) & "  Will expire this month"
+			    )
+		displayFolder: Goods Receipt
+		lineageTag: fcd23136-4a62-41f9-8232-4631f353ce8f
+
+	measure 'GR POs' = DISTINCTCOUNT ( 'GR Log'[PO Number] )
+		formatString: #,0
+		displayFolder: Goods Receipt
+		lineageTag: ef22821f-e1ed-4c3c-a127-fca348718859
+
+	measure 'GR Clear Filters Active' =
+			-- TRUE when any GR Log slicer has a selection
+			ISFILTERED ( 'GR Log'[Supplier] )
+			    || ISFILTERED ( 'GR Log'[Material] )
+			    || ISFILTERED ( 'GR Log'[PO Number] )
+			    || ISFILTERED ( 'GR Log'[Delivery Status] )
+			    || ISFILTERED ( 'GR Log'[QC Status] )
+		displayFolder: UI
+		lineageTag: 3a111011-38e4-401e-81ac-f570088c6e4c
+
+	measure 'GR Clear Button Fill' = IF ( [GR Clear Filters Active], "#C2434D", "#FFFFFF" )
+		displayFolder: UI
+		lineageTag: 687a4523-4948-45b5-ab90-9bd93aaacd8c
+
+	measure 'GR Clear Button Text' = IF ( [GR Clear Filters Active], "#FFFFFF", "#2B01BE" )
+		displayFolder: UI
+		lineageTag: 5b0090f1-84b4-44a4-9e92-ba7e23b3f89b
+
+	column 'Delivery Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 2b3b7afa-03d6-4988-b2c8-d40feefc794b
+		summarizeBy: none
+		sourceColumn: Delivery Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'GR Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 1a00612d-87b7-46ac-8d49-dea08a1ddf97
+		summarizeBy: none
+		sourceColumn: GR Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Delivery Status'
+		dataType: string
+		lineageTag: 120ee9c6-cba1-4eb1-88c9-512a94d82749
+		summarizeBy: none
+		sourceColumn: Delivery Status
+
+	column 'PO Number'
+		dataType: string
+		lineageTag: 5dc1f884-ce35-4a0c-8b15-9e838f25e542
+		summarizeBy: none
+		sourceColumn: PO Number
+
+	column 'PO Item'
+		dataType: int64
+		formatString: 0
+		lineageTag: d6679a8c-f30e-4a48-a872-ecb767fe5443
+		summarizeBy: none
+		sourceColumn: PO Item
+
+	column Supplier
+		dataType: string
+		lineageTag: 2881df88-130e-4cd1-b00f-283754e8be38
+		summarizeBy: none
+		sourceColumn: Supplier
+
+	column Material
+		dataType: string
+		lineageTag: 7780adf8-4a7c-474b-b062-c71035b51dfd
+		summarizeBy: none
+		sourceColumn: Material
+
+	column 'Material Description'
+		dataType: string
+		lineageTag: 21338b1a-1f78-4598-b4dd-e3d2abba6273
+		summarizeBy: none
+		sourceColumn: Material Description
+
+	column 'Type (MP/AC)'
+		dataType: string
+		lineageTag: 160407e3-163a-46f0-9514-303a963a20ab
+		summarizeBy: none
+		sourceColumn: Type (MP/AC)
+
+	column 'Ordered Qty'
+		dataType: double
+		formatString: #,0.##
+		lineageTag: e8ce4b6c-86dc-42a2-bcd2-eba4318b06f9
+		summarizeBy: none
+		sourceColumn: Ordered Qty
+
+	column 'Received Qty'
+		dataType: double
+		formatString: #,0.##
+		lineageTag: 69882bba-a090-458e-9326-6e2331e37344
+		summarizeBy: none
+		sourceColumn: Received Qty
+
+	column UoM
+		dataType: string
+		lineageTag: d79320d1-92fa-4b0e-91a5-fb800edd9240
+		summarizeBy: none
+		sourceColumn: UoM
+
+	column 'Remaining Qty'
+		dataType: double
+		formatString: #,0.##
+		lineageTag: bdd1c4f8-9d31-4154-a774-0be8fc150087
+		summarizeBy: none
+		sourceColumn: Remaining Qty
+
+	column 'GR Status'
+		dataType: string
+		lineageTag: 9f92d1d1-e681-4435-8d6e-49ca19994222
+		summarizeBy: none
+		sourceColumn: GR Status
+
+	column 'SAP Batch'
+		dataType: string
+		lineageTag: 326ff96f-449b-48dc-a7cc-142c3d18e61f
+		summarizeBy: none
+		sourceColumn: SAP Batch
+
+	column 'Supplier Batch'
+		dataType: string
+		lineageTag: 275ca64d-b2b9-4d02-b7d3-3ed0aca6102c
+		summarizeBy: none
+		sourceColumn: Supplier Batch
+
+	column 'Expiry Date'
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 8afc37a5-3c59-4d58-9afb-48959b7cd943
+		summarizeBy: none
+		sourceColumn: Expiry Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Days to Expiry'
+		dataType: int64
+		formatString: 0
+		lineageTag: fe7270cb-9882-4567-8e83-4fae0488d335
+		summarizeBy: none
+		sourceColumn: Days to Expiry
+
+	column 'COA Received'
+		dataType: string
+		lineageTag: 3ea2252c-8703-4407-a7b8-7d28e809f4a5
+		summarizeBy: none
+		sourceColumn: COA Received
+
+	column 'QC Status'
+		dataType: string
+		lineageTag: c1d71ff0-108f-47fc-a609-2df98bec318b
+		summarizeBy: none
+		sourceColumn: QC Status
+
+	column Comments
+		dataType: string
+		lineageTag: 59f18128-3538-4406-84c5-50eaafdfe92f
+		summarizeBy: none
+		sourceColumn: Comments
+
+	partition 'GR Log' = m
+		mode: import
+		source =
+				// ============================================================================
+				// Power Query (M) – table "GR Log"
+				// Source: sheet "GR Log" of the Excel file in the FilePath parameter.
+				// Not related to "PO Data": the two sheets are independent.
+				// ============================================================================
+				let
+				    SheetName = "GR Log",
+				
+				    // ---- 1. Load -----------------------------------------------------------
+				    Source   = Excel.Workbook(File.Contents(FilePath), true, true),   // true = first row is the header
+				    Sheets   = Table.SelectRows(Source, each [Kind] = "Sheet"),
+				    Matching = Table.SelectRows(Sheets, each Text.Lower(Text.Trim([Name])) = Text.Lower(SheetName)),
+				    Raw      =
+				        if not Table.IsEmpty(Matching) then Matching{0}[Data]
+				        else error Error.Record(
+				            "Sheet not found",
+				            "No sheet named '" & SheetName & "' in " & FilePath
+				                & ". Sheets found: " & Text.Combine(Sheets[Name], ", ")),
+				
+				    // Header cleanup: trim, drop line breaks, collapse double spaces
+				    CleanHeaders = Table.TransformColumnNames(
+				        Raw,
+				        each Text.Combine(List.Select(Text.SplitAny(Text.Clean(Text.From(_)), " #(00A0)"), (w) => w <> ""), " ")),
+				
+				    // ---- 2. Expected columns { name, kind } (matched case-insensitively) ----
+				    Columns = {
+				        {"Delivery Date", "Date"}, {"GR Date", "Date"}, {"Delivery Status", "Text"},
+				        {"PO Number", "Text"}, {"PO Item", "Whole"}, {"Supplier", "Text"}, {"Material", "Text"},
+				        {"Material Description", "Text"}, {"Type (MP/AC)", "Text"}, {"Ordered Qty", "Decimal"},
+				        {"Received Qty", "Decimal"}, {"UoM", "Text"}, {"Remaining Qty", "Decimal"}, {"GR Status", "Text"},
+				        {"SAP Batch", "Text"}, {"Supplier Batch", "Text"}, {"Expiry Date", "Date"},
+				        {"Days to Expiry", "Whole"}, {"COA Received", "Text"}, {"QC Status", "Text"}, {"Comments", "Text"}
+				    },
+				    Names        = List.Transform(Columns, each _{0}),
+				    ExcelHeaders = Table.ColumnNames(CleanHeaders),
+				    FindHeader   = (name as text) as nullable text =>
+				        List.First(List.Select(ExcelHeaders, (h) => Text.Lower(h) = Text.Lower(name)), null),
+				    Matches  = List.Transform(Names, (c) => {FindHeader(c), c}),
+				    Missing  = List.Transform(List.Select(Matches, each _{0} = null), each _{1}),
+				    Renames  = List.Select(Matches, each _{0} <> null and _{0} <> _{1}),
+				    Renamed  =
+				        if List.IsEmpty(Missing) then Table.RenameColumns(CleanHeaders, Renames)
+				        else error Error.Record(
+				            "Missing columns",
+				            "Not found in sheet " & SheetName & ": " & Text.Combine(Missing, ", ")
+				                & ". Headers found: " & Text.Combine(ExcelHeaders, ", ")),
+				    KeptColumns = Table.SelectColumns(Renamed, Names),
+				
+				    // ---- 3. Drop empty rows ------------------------------------------------
+				    NonEmptyRows = Table.SelectRows(
+				        KeptColumns,
+				        each [PO Number] <> null and Text.Trim(Text.From([PO Number])) <> ""),
+				
+				    // ---- 4. Cast every column (empty cells and "" become null) -------------
+				    IsBlank   = (v as any) as logical => v = null or (v is text and Text.Trim(v) = ""),
+				    ToText    = (v as any) as nullable text => if IsBlank(v) then null else Text.Clean(Text.Trim(Text.From(v))),
+				    ToDecimal = (v as any) as nullable number =>
+				        if IsBlank(v) then null
+				        else if v is number then v
+				        else let t = Text.Remove(Text.Trim(Text.From(v)), {" ", Character.FromNumber(160)})
+				             in  try Number.FromText(t, "en-US") otherwise try Number.FromText(t, "fr-FR") otherwise null,
+				    ToWhole   = (v as any) as nullable number => let n = ToDecimal(v) in if n = null then null else Int64.From(n),
+				    ToDate    = (v as any) as nullable date =>
+				        if IsBlank(v) then null
+				        else if v is date then v
+				        else if v is datetime or v is number then Date.From(v)
+				        else let t = Text.Trim(Text.From(v))
+				             in  try Date.FromText(t, [Format = "dd/MM/yyyy", Culture = "en-US"]) otherwise try Date.From(t, "en-GB") otherwise null,
+				    Casts = [
+				        Text    = {ToText,    type text},
+				        Date    = {ToDate,    type date},
+				        Whole   = {ToWhole,   Int64.Type},
+				        Decimal = {ToDecimal, type number}
+				    ],
+				    Typed = Table.TransformColumns(
+				        NonEmptyRows,
+				        List.Transform(Columns, (c) => {c{0}} & Record.Field(Casts, c{1})))
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

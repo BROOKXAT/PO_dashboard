@@ -6,17 +6,18 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["FilePath", "PO Data", "Calendar Base", "Issue Calendar", "Planned Arrival Calendar", "Actual Arrival Calendar", "Reception Calendar"]
+annotation PBI_QueryOrder = ["FilePath", "PO Data", "Calendar Base", "Order Calendar", "Planned Arrival Calendar", "Actual Arrival Calendar", "Reception Calendar", "GR Log"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
 ref table 'PO Data'
-ref table 'Issue Calendar'
+ref table 'Order Calendar'
 ref table 'Planned Arrival Calendar'
 ref table 'Actual Arrival Calendar'
 ref table 'Reception Calendar'
+ref table 'GR Log'
 
 ref cultureInfo en-GB
 

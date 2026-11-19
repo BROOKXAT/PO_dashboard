@@ -31,7 +31,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "🟢  Arrived on or before the planned date",
+                    "value": "🟢  On time, early, or up to 7 days late",
                     "textStyle": {
                       "fontSize": "10pt",
                       "color": "#10123F"
@@ -42,7 +42,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "🟠  1-7 days late (arrived, or not arrived and overdue)",
+                    "value": "🟠  8-21 days late (arrived, or not arrived and overdue)",
                     "textStyle": {
                       "fontSize": "10pt",
                       "color": "#10123F"
@@ -53,7 +53,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "🔴  More than 7 days late (arrived, or not arrived and overdue)",
+                    "value": "🔴  More than 21 days late (arrived, or not arrived and overdue)",
                     "textStyle": {
                       "fontSize": "10pt",
                       "color": "#10123F"
